@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>  
+</head>
+<body onload="javascript:init()">
+  <div>
+    <textarea id="rxConsole"></textarea>
+  </div>
+  <hr/>
+  <div>
+    <button id="on_off" onclick="sendText();">ON</button>
+  </div>
+  <hr/>
+  <div>
+    <input type="range" min="0" max="1023" value="512" id="brightness" oninput="sendBrightness()" />
+  </div> 
+  
+  <script>
+
+    var Socket;
+    function init() {
+      Socket = new WebSocket('ws://192.168.20.170:3000/');
+
+      Socket.onmessage = function(event){
+        /*document.getElementById("rxConsole").value += event.data;
+        console.log(event);*/
+        if(event.data == "ON"){
+          document.getElementById("on_off").innerHTML = event.data;
+          document.getElementById("on_off").style.backgroundColor = "yellow";
+        }
+        else if(event.data == "OFF"){
+          document.getElementById("on_off").innerHTML = event.data;
+          document.getElementById("on_off").style.backgroundColor = "gray";
+        }
+
+      }
+    }
+
+    function sendText(){
+      /*Socket.send(document.getElementById("txBar").value);
+      document.getElementById("txBar").value = "";*/
+      Socket.send("toggle");      
+    }
+
+    function sendBrightness(){
+      Socket.send("#"+document.getElementById("brightness").value);
+    }    
+  </script>
+
+</body>
+</html>
